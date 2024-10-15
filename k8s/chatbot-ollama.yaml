@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: voxella
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: voxella
+  name: voxella
+type: Opaque
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: voxella
+  name: voxella
+  labels:
+    app: voxella
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voxella
+  template:
+    metadata:
+      labels:
+        app: voxella
+    spec:
+      containers:
+        - name: voxella
+          image: <docker user>/voxella:latest
+          resources: {}
+          ports:
+            - containerPort: 3000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: voxella
+  name: voxella
+  labels:
+    app: voxella
+spec:
+  ports:
+    - name: https
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: voxella
+  type: ClusterIP
